@@ -52,36 +52,13 @@ def flushcache():
         pass
     get_sack().load_system_repo(build_cache=True)
 
-def version_tuple(versionstr):
-    e = '0'
-    v = None
-    r = None
-    colon_index = versionstr.find(':')
-    if colon_index > 0:
-        e = str(versionstr[:colon_index])
-    dash_index = versionstr.find('-')
-    if dash_index > 0:
-        tmp = versionstr[colon_index + 1:dash_index]
-        if tmp != '':
-            v = tmp
-        arch_index = versionstr.find('.', dash_index)
-        if arch_index > 0:
-            r = versionstr[dash_index + 1:arch_index]
-        else:
-            r = versionstr[dash_index + 1:]
-    else:
-        tmp = versionstr[colon_index + 1:]
-        if tmp != '':
-            v = tmp
-    return (e, v, r)
-
 def versioncompare(versions):
     sack = get_sack()
     if (versions[0] is None) or (versions[1] is None):
       outpipe.write('0\n')
       outpipe.flush()
     else:
-      evr_comparison = dnf.rpm.rpm.labelCompare(version_tuple(versions[0]), version_tuple(versions[1]))
+      evr_comparison = sack.evr_cmp(versions[0], versions[1])
       outpipe.write('{}\n'.format(evr_comparison))
       outpipe.flush()
 

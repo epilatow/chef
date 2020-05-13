@@ -83,13 +83,13 @@ class Chef
 
         def candidate_version
           package_name_array.each_with_index.map do |pkg, i|
-            available_version(i).version_with_arch
+            available_version(i).version
           end
         end
 
         def get_current_versions
           package_name_array.each_with_index.map do |pkg, i|
-            installed_version(i).version_with_arch
+            installed_version(i).version
           end
         end
 
