@@ -201,6 +201,27 @@ class Chef
                                           python_helper.package_query(:whatavailable, package_name_array[index], version: safe_version_array[index], arch: safe_arch_array[index], options: options)
                                         end
 
+          #
+          # Once we've determined an available version for this
+          # package remove new_resource.version. This will force
+          # package.rb to default to using the available_version
+          # instead of new_resource.version.
+          #
+          if new_resource.version.is_a?(Array)
+            #
+            # new_resource.version is an immutable array, so we have to
+            # make a new copy when updating it.  Unfortunately we can't
+            # just use .clone here because that also results in a new
+            # immutable array.
+            #
+            new_resource.version = \
+              new_resource.version.map.each_with_index do |v, i|
+                (i == index) ? nil : v
+              end
+          elsif index == 0
+            new_resource.version = nil
+          end
+
           @available_version[index]
         end
 
